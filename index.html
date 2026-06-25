@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palermo Bleu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white: #ffffff;
+  --off: #f7f5f2;
+  --ink: #1a1a18;
+  --muted: #9a9690;
+  --accent: #c1440e;
+  --cobalt: #2e4a7a;
+  --border: #e8e4de;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--white); color: var(--ink); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 56px;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 400; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink); text-decoration: none;
+}
+.nav-right { display: flex; align-items: center; gap: 2rem; }
+.nav-right a { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.nav-right a:hover { color: var(--ink); }
+.nav-menu-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink); display: flex; align-items: center; gap: 0.5rem;
+}
+.hamburger { display: flex; flex-direction: column; gap: 4px; }
+.hamburger span { display: block; width: 18px; height: 1px; background: var(--ink); transition: all 0.3s; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 300;
+  width: 280px; background: var(--white);
+  border-right: 1px solid var(--border);
+  transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  padding: 5rem 2rem 2rem;
+  display: flex; flex-direction: column; gap: 0;
+}
+.sidebar.open { transform: translateX(0); }
+.sidebar-close {
+  position: absolute; top: 1.4rem; right: 1.5rem;
+  background: none; border: none; cursor: pointer;
+  font-size: 1.4rem; color: var(--muted); line-height: 1;
+}
+.sidebar-close:hover { color: var(--ink); }
+.sidebar-label {
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.2rem;
+}
+.sidebar-category {
+  border-top: 1px solid var(--border);
+  padding: 0;
+}
+.sidebar-category-btn {
+  width: 100%; background: none; border: none; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 0; font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 400; letter-spacing: 0.04em;
+  color: var(--ink); text-align: left;
+}
+.sidebar-arrow { font-size: 0.8rem; color: var(--muted); transition: transform 0.25s; }
+.sidebar-category.open .sidebar-arrow { transform: rotate(90deg); }
+.sidebar-items { display: none; padding-bottom: 0.8rem; }
+.sidebar-category.open .sidebar-items { display: block; }
+.sidebar-items a {
+  display: block; padding: 0.45rem 0;
+  font-size: 0.8rem; letter-spacing: 0.08em; color: var(--muted);
+  text-decoration: none; transition: color 0.2s;
+}
+.sidebar-items a:hover { color: var(--ink); }
+.sidebar-overlay {
+  position: fixed; inset: 0; z-index: 250;
+  background: rgba(0,0,0,0.25);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.sidebar-overlay.visible { opacity: 1; pointer-events: all; }
+
+/* ── HERO ── */
+.hero {
+  margin-top: 56px;
+  position: relative; width: 100%; aspect-ratio: 16/9;
+  max-height: 92vh; overflow: hidden;
+  background: var(--off);
+  display: flex; align-items: center; justify-content: center;
+}
+.hero video, .hero img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover;
+}
+.hero-placeholder {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #e8e0d4 0%, #d4c9b8 50%, #c9bfad 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-placeholder-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 300; font-style: italic;
+  letter-spacing: 0.06em; color: rgba(26,26,24,0.25);
+}
+.hero-caption {
+  position: absolute; bottom: 2rem; left: 2rem;
+  font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── DUAL IMAGE BAND ── */
+.dual-band {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3px; background: #e0dbd4;
+}
+.dual-band-item {
+  position: relative; aspect-ratio: 4/3; overflow: hidden;
+  background: var(--off);
+  display: flex; align-items: center; justify-content: center;
+}
+.dual-band-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.dual-band-item:hover img { transform: scale(1.03); }
+.dual-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: flex-end;
+  padding: 1.5rem;
+}
+.dual-placeholder-1 { background: linear-gradient(160deg, #c9bfad 0%, #b8ad9a 100%); }
+.dual-placeholder-2 { background: linear-gradient(160deg, #2e4a7a22 0%, #c1440e18 100%), #d4c9b8; }
+.dual-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; font-weight: 300; letter-spacing: 0.1em;
+  color: rgba(26,26,24,0.4); text-transform: uppercase;
+}
+
+/* ── SECTION HEADER ── */
+.section-header {
+  padding: 4rem 2rem 2rem;
+  display: flex; align-items: baseline; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 300; letter-spacing: 0.02em;
+}
+.section-title em { font-style: italic; color: var(--accent); }
+.section-count { font-size: 0.72rem; letter-spacing: 0.12em; color: var(--muted); }
+
+/* ── PRODUCT GRID ── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  margin-bottom: 1px;
+}
+.product-card {
+  background: var(--white); cursor: pointer;
+  display: flex; flex-direction: column;
+}
+.product-thumb {
+  aspect-ratio: 3/4; overflow: hidden;
+  background: var(--off);
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.product-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.product-card:hover .product-thumb img { transform: scale(1.04); }
+.product-thumb-placeholder {
+  width: 100%; height: 100%;
+  background: var(--off);
+  display: flex; align-items: center; justify-content: center;
+}
+.product-thumb-placeholder span {
+  font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+}
+.product-info { padding: 1rem 1rem 1.4rem; }
+.product-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; font-weight: 400; margin-bottom: 0.25rem;
+}
+.product-price { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; }
+
+/* ── EDITORIAL BAND 2 ── */
+.editorial-band {
+  display: grid; grid-template-columns: 2fr 1fr;
+  gap: 3px; background: #e0dbd4; margin-top: 1px;
+}
+.editorial-item {
+  position: relative; overflow: hidden;
+  background: var(--off); min-height: 300px;
+  display: flex; align-items: center; justify-content: center;
+}
+.editorial-item img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.editorial-placeholder-a { background: linear-gradient(140deg, #1a2a4a 0%, #2e4a7a 100%); }
+.editorial-placeholder-b { background: linear-gradient(140deg, #c1440e22 0%, #e8c89a 100%), #d4c9b8; }
+.editorial-text {
+  position: relative; z-index: 2; padding: 2.5rem;
+  align-self: flex-end; width: 100%;
+}
+.editorial-tag {
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55); margin-bottom: 0.6rem; display: block;
+}
+.editorial-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 300; font-style: italic;
+  color: rgba(255,255,255,0.9); line-height: 1.2;
+}
+
+/* ── BRAND STRIP ── */
+.brand-strip {
+  padding: 5rem 2rem;
+  max-width: 640px; margin: 0 auto;
+  text-align: center;
+}
+.brand-strip h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 300; line-height: 1.45; letter-spacing: 0.01em;
+  margin-bottom: 1.5rem;
+}
+.brand-strip h2 em { font-style: italic; color: var(--accent); }
+.brand-strip p {
+  font-size: 0.85rem; color: var(--muted); line-height: 1.85;
+  letter-spacing: 0.02em;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem; align-items: start;
+}
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink);
+}
+.footer-col { display: flex; flex-direction: column; gap: 0.6rem; }
+.footer-col a {
+  font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted);
+  text-decoration: none; transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--ink); }
+.footer-copy {
+  font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .editorial-band { grid-template-columns: 1fr; }
+  footer { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  nav { padding: 0 1.2rem; }
+  .section-header { padding: 3rem 1.2rem 1.5rem; }
+  .brand-strip { padding: 3.5rem 1.2rem; }
+  footer { grid-template-columns: 1fr; padding: 2rem 1.2rem; }
+  .dual-band { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <button class="sidebar-close" onclick="closeSidebar()">×</button>
+  <p class="sidebar-label">Shop</p>
+
+  <div class="sidebar-category" id="cat-tshirts">
+    <button class="sidebar-category-btn" onclick="toggleCategory('cat-tshirts')">
+      T-Shirts <span class="sidebar-arrow">›</span>
+    </button>
+    <div class="sidebar-items">
+      <a href="#">All T-Shirts</a>
+      <a href="#">New Arrivals</a>
+    </div>
+  </div>
+
+  <div class="sidebar-category" id="cat-knitwear">
+    <button class="sidebar-category-btn" onclick="toggleCategory('cat-knitwear')">
+      Knitwear <span class="sidebar-arrow">›</span>
+    </button>
+    <div class="sidebar-items">
+      <a href="#">All Knitwear</a>
+      <a href="#">Jerseys</a>
+    </div>
+  </div>
+
+  <div class="sidebar-category" id="cat-accessories">
+    <button class="sidebar-category-btn" onclick="toggleCategory('cat-accessories')">
+      Accessories <span class="sidebar-arrow">›</span>
+    </button>
+    <div class="sidebar-items">
+      <a href="#">All Accessories</a>
+    </div>
+  </div>
+</aside>
+
+<!-- NAV -->
+<nav>
+  <button class="nav-menu-btn" onclick="openSidebar()">
+    <div class="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+    Shop
+  </button>
+  <a href="#" class="nav-logo">Palermo Bleu</a>
+  <div class="nav-right">
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO — reemplaza con <video autoplay muted loop playsinline src="tu-video.mp4"> o <img src="tu-imagen.jpg"> -->
+<section class="hero">
+  <div class="hero-placeholder">
+    <span class="hero-placeholder-text">Palermo Bleu</span>
+  </div>
+  <span class="hero-caption">New Collection — 2026</span>
+</section>
+
+<!-- DUAL IMAGE BAND -->
+<div class="dual-band">
+  <div class="dual-band-item">
+    <!-- <img src="editorial-1.jpg" alt=""> -->
+    <div class="dual-placeholder dual-placeholder-1">
+      <span class="dual-label">Image 01</span>
+    </div>
+  </div>
+  <div class="dual-band-item">
+    <!-- <img src="editorial-2.jpg" alt=""> -->
+    <div class="dual-placeholder dual-placeholder-2">
+      <span class="dual-label">Image 02</span>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT SECTION -->
+<div class="section-header">
+  <h2 class="section-title">T-Shirts <em>&</em> Tops</h2>
+  <span class="section-count">— Coming soon</span>
+</div>
+
+<div class="product-grid">
+  <!-- Card 1 -->
+  <div class="product-card">
+    <div class="product-thumb">
+      <!-- <img src="product-1.jpg" alt=""> -->
+      <div class="product-thumb-placeholder"><span>Photo</span></div>
+    </div>
+    <div class="product-info">
+      <p class="product-name">Essential Tee I</p>
+      <p class="product-price">— €</p>
+    </div>
+  </div>
+  <!-- Card 2 -->
+  <div class="product-card">
+    <div class="product-thumb">
+      <div class="product-thumb-placeholder"><span>Photo</span></div>
+    </div>
+    <div class="product-info">
+      <p class="product-name">Essential Tee II</p>
+      <p class="product-price">— €</p>
+    </div>
+  </div>
+  <!-- Card 3 -->
+  <div class="product-card">
+    <div class="product-thumb">
+      <div class="product-thumb-placeholder"><span>Photo</span></div>
+    </div>
+    <div class="product-info">
+      <p class="product-name">Essential Tee III</p>
+      <p class="product-price">— €</p>
+    </div>
+  </div>
+  <!-- Card 4 -->
+  <div class="product-card">
+    <div class="product-thumb">
+      <div class="product-thumb-placeholder"><span>Photo</span></div>
+    </div>
+    <div class="product-info">
+      <p class="product-name">Essential Tee IV</p>
+      <p class="product-price">— €</p>
+    </div>
+  </div>
+</div>
+
+<!-- EDITORIAL BAND 2 -->
+<div class="editorial-band">
+  <div class="editorial-item">
+    <!-- <img src="editorial-3.jpg" alt=""> -->
+    <div class="editorial-placeholder-a" style="position:absolute;inset:0;"></div>
+    <div class="editorial-text">
+      <span class="editorial-tag">Palermo Bleu — 2026</span>
+      <p class="editorial-headline">Colour as memory.<br>Cloth as character.</p>
+    </div>
+  </div>
+  <div class="editorial-item">
+    <!-- <img src="editorial-4.jpg" alt=""> -->
+    <div class="editorial-placeholder-b" style="position:absolute;inset:0;"></div>
+  </div>
+</div>
+
+<!-- BRAND STRIP -->
+<div class="brand-strip">
+  <h2>Made for those who wear <em>colour</em> the way others wear silence.</h2>
+  <p>Palermo Bleu draws from European expressionist painting — raw pigment, lived-in texture, the warmth of things that carry history. Each piece is built to be worn, not preserved.</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <p class="footer-logo">Palermo Bleu</p>
+    <p class="footer-copy">© 2026</p>
+  </div>
+  <div class="footer-col">
+    <a href="#">Shop</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-col">
+    <a href="#">Instagram</a>
+    <a href="#">Size Guide</a>
+    <a href="#">Shipping & Returns</a>
+  </div>
+</footer>
+
+<script>
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+function toggleCategory(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSidebar();
+});
+</script>
+
+</body>
+</html>
