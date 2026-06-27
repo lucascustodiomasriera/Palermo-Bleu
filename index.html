@@ -75,7 +75,9 @@ nav {
   padding: 0 2rem; height: 56px;
   background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
+nav.hidden { opacity: 0; visibility: hidden; }
 .nav-logo {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.15rem; font-weight: 400; letter-spacing: 0.18em;
@@ -94,52 +96,99 @@ nav {
 
 /* ── SIDEBAR ── */
 .sidebar {
-  position: fixed; top: 0; left: 0; bottom: 0; z-index: 300;
-  width: 280px; background: var(--white);
-  border-right: 1px solid var(--border);
-  transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-  padding: 5rem 2rem 2rem;
-  display: flex; flex-direction: column; gap: 0;
+  position: fixed; top: 16px; left: 16px; bottom: 16px; z-index: 400;
+  width: clamp(300px, 32vw, 460px);
+  background: rgba(252,250,248,0.42);
+  backdrop-filter: blur(36px);
+  -webkit-backdrop-filter: blur(36px);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.45);
+  transform: translateX(calc(-100% - 24px));
+  transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+  padding: 1.8rem 2.2rem 2rem;
+  display: flex; flex-direction: column;
+  overflow-y: auto; scrollbar-width: none;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.05);
 }
+.sidebar::-webkit-scrollbar { display: none; }
 .sidebar.open { transform: translateX(0); }
+
 .sidebar-close {
-  position: absolute; top: 1.4rem; right: 1.5rem;
+  display: flex; align-items: center; gap: 0.4rem;
   background: none; border: none; cursor: pointer;
-  font-size: 1.4rem; color: var(--muted); line-height: 1;
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink); margin-bottom: 2rem; align-self: flex-start;
+  font-family: 'DM Sans', sans-serif; padding: 0; opacity: 0.65;
+  transition: opacity 0.2s;
 }
-.sidebar-close:hover { color: var(--ink); }
-.sidebar-label {
-  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 1.2rem;
+.sidebar-close:hover { opacity: 1; }
+.sidebar-close-x { font-size: 0.85rem; line-height: 1; }
+
+.sidebar-nav-main { margin-bottom: 2rem; }
+.sidebar-nav-main a {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem; font-weight: 300; line-height: 1.3;
+  color: var(--ink); text-decoration: none; letter-spacing: 0.01em;
+  transition: color 0.2s;
 }
-.sidebar-category {
-  border-top: 1px solid var(--border);
-  padding: 0;
-}
+.sidebar-nav-main a:hover { color: var(--muted); }
+
+.sidebar-divider { border: none; border-top: 1px solid rgba(26,26,24,0.1); margin: 0 0 1.2rem; }
+
+.sidebar-category { padding: 0; }
 .sidebar-category-btn {
   width: 100%; background: none; border: none; cursor: pointer;
   display: flex; justify-content: space-between; align-items: center;
-  padding: 1rem 0; font-family: 'Cormorant Garamond', serif;
-  font-size: 1.05rem; font-weight: 400; letter-spacing: 0.04em;
+  padding: 0.6rem 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 300; letter-spacing: 0.04em;
   color: var(--ink); text-align: left;
+  border-bottom: 1px solid rgba(26,26,24,0.07);
+  transition: color 0.2s;
 }
-.sidebar-arrow { font-size: 0.8rem; color: var(--muted); transition: transform 0.25s; }
+.sidebar-category-btn:hover { color: var(--muted); }
+.sidebar-arrow { font-size: 0.9rem; color: var(--muted); transition: transform 0.3s ease; }
 .sidebar-category.open .sidebar-arrow { transform: rotate(90deg); }
-.sidebar-items { display: none; padding-bottom: 0.8rem; }
-.sidebar-category.open .sidebar-items { display: block; }
+.sidebar-items {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, padding 0.3s ease;
+  padding-left: 0.8rem;
+}
+.sidebar-category.open .sidebar-items {
+  max-height: 300px; opacity: 1;
+  padding-top: 0.4rem; padding-bottom: 0.6rem;
+}
 .sidebar-items a {
-  display: block; padding: 0.45rem 0;
-  font-size: 0.8rem; letter-spacing: 0.08em; color: var(--muted);
+  display: block; padding: 0.3rem 0;
+  font-size: 0.78rem; letter-spacing: 0.08em; color: var(--muted);
   text-decoration: none; transition: color 0.2s;
 }
 .sidebar-items a:hover { color: var(--ink); }
+
+.sidebar-footer {
+  margin-top: auto; padding-top: 1.5rem;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.sidebar-footer-link {
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; transition: color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.sidebar-footer-link:hover { color: var(--ink); }
+.sidebar-logo { width: 56px; height: auto; opacity: 0.2; }
+
 .sidebar-overlay {
-  position: fixed; inset: 0; z-index: 250;
-  background: rgba(0,0,0,0.25);
+  position: fixed; inset: 0; z-index: 350;
+  background: rgba(0,0,0,0.08);
   opacity: 0; pointer-events: none;
   transition: opacity 0.4s;
 }
 .sidebar-overlay.visible { opacity: 1; pointer-events: all; }
+
+@media (max-width: 640px) {
+  .sidebar { top: 0; left: 0; right: 0; bottom: 0; width: 100%; border-radius: 0; border: none; }
+}
 
 /* ── HERO ── */
 .hero {
@@ -346,8 +395,17 @@ footer {
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <button class="sidebar-close" onclick="closeSidebar()">×</button>
-  <p class="sidebar-label">Shop</p>
+  <button class="sidebar-close" onclick="closeSidebar()">
+    <span class="sidebar-close-x">×</span> Close
+  </button>
+
+  <nav class="sidebar-nav-main">
+    <a href="#">New In</a>
+    <a href="#">Shop All</a>
+    <a href="#">About</a>
+  </nav>
+
+  <hr class="sidebar-divider">
 
   <div class="sidebar-category" id="cat-tshirts">
     <button class="sidebar-category-btn" onclick="toggleCategory('cat-tshirts')">
@@ -377,6 +435,11 @@ footer {
       <a href="#">All Accessories</a>
     </div>
   </div>
+
+  <div class="sidebar-footer">
+    <a href="#" class="sidebar-footer-link">→ Instagram</a>
+    <img src="pb_logo_outline_negro.png" alt="Palermo Bleu" class="sidebar-logo">
+  </div>
 </aside>
 
 <!-- NAV -->
@@ -385,7 +448,6 @@ footer {
     <div class="hamburger">
       <span></span><span></span><span></span>
     </div>
-    Shop
   </button>
   <a href="#" class="nav-logo">Palermo Bleu</a>
   <div class="nav-right">
@@ -525,16 +587,17 @@ window.addEventListener('load', () => {
 function openSidebar() {
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebarOverlay').classList.add('visible');
+  document.querySelector('nav').classList.add('hidden');
   document.body.style.overflow = 'hidden';
 }
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarOverlay').classList.remove('visible');
+  document.querySelector('nav').classList.remove('hidden');
   document.body.style.overflow = '';
 }
 function toggleCategory(id) {
-  const el = document.getElementById(id);
-  el.classList.toggle('open');
+  document.getElementById(id).classList.toggle('open');
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeSidebar();
