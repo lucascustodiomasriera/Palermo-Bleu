@@ -36,10 +36,6 @@ body { background: var(--white); color: var(--ink); font-family: 'DM Sans', sans
 .intro.done { display: none; }
 @keyframes introFadeIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
 @keyframes introFadeOut { from { opacity: 1; } to { opacity: 0; } }
-.intro-screen-fade {
-  animation: screenFadeOut 0.5s 1.6s ease forwards;
-}
-@keyframes screenFadeOut { from { opacity: 1; } to { opacity: 0; } }
 
 /* ── PARALLAX ── */
 .parallax-wrap { overflow: hidden; position: relative; }
@@ -272,6 +268,9 @@ nav.hidden { opacity: 0; visibility: hidden; }
   background: var(--white); cursor: pointer;
   display: flex; flex-direction: column;
   text-decoration: none; color: inherit;
+  /* FIX: no fade-up on cards — always visible */
+  opacity: 1 !important;
+  transform: none !important;
 }
 .product-thumb {
   aspect-ratio: 3/4; overflow: hidden;
@@ -460,7 +459,7 @@ footer {
   </div>
 </nav>
 
-<!-- HERO — reemplaza con <video autoplay muted loop playsinline src="tu-video.mp4"> o <img src="tu-imagen.jpg"> -->
+<!-- HERO -->
 <section class="hero parallax-wrap">
   <div class="hero-inner">
     <div class="hero-placeholder" id="heroParallax">
@@ -473,13 +472,11 @@ footer {
 <!-- DUAL IMAGE BAND -->
 <div class="dual-band">
   <div class="dual-band-item parallax-wrap">
-    <!-- <img class="parallax-img" src="editorial-1.jpg" alt=""> -->
     <div class="dual-placeholder dual-placeholder-1">
       <span class="dual-label">Image 01</span>
     </div>
   </div>
   <div class="dual-band-item parallax-wrap">
-    <!-- <img class="parallax-img" src="editorial-2.jpg" alt=""> -->
     <div class="dual-placeholder dual-placeholder-2">
       <span class="dual-label">Image 02</span>
     </div>
@@ -508,7 +505,6 @@ footer {
 <!-- EDITORIAL BAND 2 -->
 <div class="editorial-band">
   <div class="editorial-item">
-    <!-- <img src="editorial-3.jpg" alt=""> -->
     <div class="editorial-placeholder-a" style="position:absolute;inset:0;"></div>
     <div class="editorial-text">
       <span class="editorial-tag">Palermo Bleu — 2026</span>
@@ -516,7 +512,6 @@ footer {
     </div>
   </div>
   <div class="editorial-item">
-    <!-- <img src="editorial-4.jpg" alt=""> -->
     <div class="editorial-placeholder-b" style="position:absolute;inset:0;"></div>
   </div>
 </div>
@@ -579,12 +574,8 @@ document.addEventListener('keydown', e => {
 // ── PARALLAX ──
 function handleParallax() {
   const scrollY = window.scrollY;
-  // Hero parallax
   const heroEl = document.getElementById('heroParallax');
-  if (heroEl) {
-    heroEl.style.transform = `translateY(${scrollY * 0.3}px)`;
-  }
-  // Parallax imgs
+  if (heroEl) heroEl.style.transform = `translateY(${scrollY * 0.3}px)`;
   document.querySelectorAll('.parallax-img').forEach(img => {
     const rect = img.closest('.parallax-wrap').getBoundingClientRect();
     const offset = (rect.top / window.innerHeight) * 30;
@@ -592,7 +583,7 @@ function handleParallax() {
   });
 }
 
-// ── FADE UP ON SCROLL ──
+// ── FADE UP ON SCROLL (solo section-header y brand-strip, no product cards) ──
 const fadeEls = document.querySelectorAll('.fade-up');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -603,15 +594,6 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.12 });
 fadeEls.forEach(el => observer.observe(el));
-
-// ── PRODUCT CARDS FADE ──
-document.querySelectorAll('.product-card').forEach((card, i) => {
-  card.style.opacity = '0';
-  card.style.transform = 'translateY(20px)';
-  card.style.transition = `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s`;
-  observer.observe(card);
-  card.classList.add('fade-up');
-});
 
 window.addEventListener('scroll', handleParallax, { passive: true });
 handleParallax();
