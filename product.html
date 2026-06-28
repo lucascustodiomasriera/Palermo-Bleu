@@ -43,28 +43,35 @@ nav {
   display: grid;
   grid-template-columns: 1fr 420px;
   min-height: calc(100vh - 56px);
+  align-items: start;
 }
 
-/* ── LEFT: GALLERY (scroll vertical estilo Nude Project) ── */
+/* ── LEFT: GALLERY ── */
 .gallery {
   display: flex; flex-direction: column;
   gap: 3px; background: #e0dbd4;
 }
 .gallery-photo {
-  position: relative; width: 100%;
-  aspect-ratio: 4/5; overflow: hidden;
-  background: var(--off); cursor: zoom-in;
+  position: relative;
+  width: 100%;
+  /* FIX: altura controlada — la foto se ve entera sin scrollear */
+  height: 80vh;
+  max-height: 680px;
+  overflow: hidden;
+  background: var(--off);
+  cursor: zoom-in;
 }
 .gallery-photo img {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%;
+  height: 100%;
+  /* FIX: contain en vez de cover — muestra la camiseta entera */
+  object-fit: contain;
+  object-position: center;
+  background: var(--off);
   transition: transform 0.5s ease;
 }
 .gallery-photo:hover img { transform: scale(1.02); }
 .gallery-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-}
-.gallery-placeholder-inner {
   width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
 }
@@ -119,7 +126,7 @@ nav {
 .size-guide-link {
   font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--muted); text-decoration: underline; cursor: pointer;
-  background: none; border: none;
+  background: none; border: none; font-family: 'DM Sans', sans-serif;
 }
 .size-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
@@ -135,13 +142,6 @@ nav {
 }
 .size-btn:hover { border-color: var(--ink); }
 .size-btn.selected { background: var(--ink); color: var(--white); border-color: var(--ink); }
-.size-btn.soldout { color: var(--muted); cursor: not-allowed; position: relative; }
-.size-btn.soldout::after {
-  content: ''; position: absolute;
-  top: 50%; left: 10%; right: 10%;
-  height: 1px; background: var(--border);
-  transform: translateY(-50%);
-}
 
 /* Buy button */
 .btn-buy {
@@ -169,7 +169,6 @@ nav {
 }
 .btn-wishlist:hover { border-color: var(--ink); }
 
-/* Divider */
 .info-divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
 
 /* Accordion */
@@ -187,20 +186,14 @@ nav {
 .accordion-content { display: none; padding-bottom: 1.2rem; }
 .accordion-item.open .accordion-content { display: block; }
 .accordion-content p {
-  font-size: 0.82rem; color: var(--muted); line-height: 1.85;
-  letter-spacing: 0.02em;
+  font-size: 0.82rem; color: var(--muted); line-height: 1.85; letter-spacing: 0.02em;
 }
-.accordion-content ul {
-  list-style: none; margin-top: 0.6rem;
-}
+.accordion-content ul { list-style: none; margin-top: 0.6rem; }
 .accordion-content ul li {
   font-size: 0.8rem; color: var(--muted); line-height: 1.85;
   padding-left: 1rem; position: relative;
 }
-.accordion-content ul li::before {
-  content: '—'; position: absolute; left: 0;
-  color: var(--border);
-}
+.accordion-content ul li::before { content: '—'; position: absolute; left: 0; color: var(--border); }
 
 /* ── LIGHTBOX ── */
 .lightbox {
@@ -251,8 +244,7 @@ nav {
 .size-table { width: 100%; border-collapse: collapse; }
 .size-table th, .size-table td {
   padding: 0.65rem 0.8rem; text-align: center;
-  font-size: 0.78rem; border-bottom: 1px solid var(--border);
-  color: var(--muted);
+  font-size: 0.78rem; border-bottom: 1px solid var(--border); color: var(--muted);
 }
 .size-table th { font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.65rem; }
 .size-table td:first-child { font-weight: 400; color: var(--ink); }
@@ -260,9 +252,8 @@ nav {
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .product-page { grid-template-columns: 1fr; }
-  .gallery-main { position: relative; top: 0; height: auto; }
-  .gallery-main-img { aspect-ratio: 4/5; height: auto; }
-  .product-info { border-left: none; border-top: 1px solid var(--border); padding: 2rem 1.2rem 3rem; }
+  .gallery-photo { height: 70vw; max-height: 500px; }
+  .product-info { border-left: none; border-top: 1px solid var(--border); padding: 2rem 1.2rem 3rem; position: relative; top: 0; height: auto; }
   .lightbox-nav { display: none; }
 }
 </style>
@@ -313,7 +304,7 @@ nav {
 <!-- PRODUCT PAGE -->
 <div class="product-page">
 
-  <!-- GALLERY — fotos apiladas verticalmente -->
+  <!-- GALLERY -->
   <div class="gallery">
 
     <div class="gallery-photo" onclick="openLightbox(0)">
@@ -325,31 +316,31 @@ nav {
     </div>
 
     <div class="gallery-photo" onclick="openLightbox(2)">
-      <div class="gallery-placeholder ph-3"><div class="gallery-placeholder-inner"><span>Photo 03</span></div></div>
+      <div class="gallery-placeholder ph-3"><span>Photo 03</span></div>
     </div>
 
     <div class="gallery-photo" onclick="openLightbox(3)">
-      <div class="gallery-placeholder ph-4"><div class="gallery-placeholder-inner"><span>Photo 04</span></div></div>
+      <div class="gallery-placeholder ph-4"><span>Photo 04</span></div>
     </div>
 
     <div class="gallery-photo" onclick="openLightbox(4)">
-      <div class="gallery-placeholder ph-5"><div class="gallery-placeholder-inner"><span>Photo 05</span></div></div>
+      <div class="gallery-placeholder ph-5"><span>Photo 05</span></div>
     </div>
 
     <div class="gallery-photo" onclick="openLightbox(5)">
-      <div class="gallery-placeholder ph-6"><div class="gallery-placeholder-inner"><span>Photo 06</span></div></div>
+      <div class="gallery-placeholder ph-6"><span>Photo 06</span></div>
     </div>
 
     <div class="gallery-photo" onclick="openLightbox(6)">
-      <div class="gallery-placeholder ph-7"><div class="gallery-placeholder-inner"><span>Photo 07</span></div></div>
+      <div class="gallery-placeholder ph-7"><span>Photo 07</span></div>
     </div>
 
     <div class="gallery-photo" onclick="openLightbox(7)">
-      <div class="gallery-placeholder ph-8"><div class="gallery-placeholder-inner"><span>Photo 08</span></div></div>
+      <div class="gallery-placeholder ph-8"><span>Photo 08</span></div>
     </div>
 
     <div class="gallery-photo" onclick="openLightbox(8)">
-      <div class="gallery-placeholder ph-9"><div class="gallery-placeholder-inner"><span>Photo 09</span></div></div>
+      <div class="gallery-placeholder ph-9"><span>Photo 09</span></div>
     </div>
 
   </div>
@@ -378,18 +369,11 @@ nav {
 
     <p class="size-warning" id="sizeWarning">Please select a size</p>
 
-    <!--
-      STRIPE PAYMENT LINKS:
-      1. Ve a dashboard.stripe.com → Payment Links → Crear link por talla
-      2. Sustituye los href de abajo por los links reales de Stripe
-      Los links deben ir por talla, o puedes usar uno solo y añadir la talla como parámetro
-    -->
     <a href="#" class="btn-buy disabled" id="btnBuy" onclick="handleBuy(event)">Add to cart</a>
     <button class="btn-wishlist">Save to wishlist</button>
 
     <hr class="info-divider">
 
-    <!-- ACCORDIONS -->
     <div class="accordion-item" id="acc-details">
       <button class="accordion-btn" onclick="toggleAccordion('acc-details')">
         Details <span class="accordion-arrow">+</span>
@@ -432,8 +416,6 @@ nav {
 </div>
 
 <script>
-// ── FOTOS DEL PRODUCTO ──
-// Cuando tengas las fotos, reemplaza los strings vacíos por los nombres de archivo:
 const photos = [
   'tee-front.png',
   'tee-back.jpeg',
@@ -443,7 +425,6 @@ const photos = [
 let currentImg = 0;
 let selectedSize = null;
 
-// ── STRIPE PAYMENT LINKS POR TALLA ──
 const stripeLinks = {
   'XS': 'https://buy.stripe.com/00w6oJ0pWdAI8PifZmew800',
   'S':  'https://buy.stripe.com/6oU28t4Gcaowd5ybJ6ew801',
@@ -469,7 +450,6 @@ function handleBuy(e) {
   }
 }
 
-// ── LIGHTBOX ──
 function openLightbox(index) {
   if (!photos[index]) return;
   currentImg = index;
@@ -497,7 +477,6 @@ function updateCounter() {
   document.getElementById('lightboxCounter').textContent = (currentImg + 1) + ' / ' + filled;
 }
 
-// ── SIZE GUIDE ──
 function openSizeModal() {
   document.getElementById('sizeModal').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -510,12 +489,10 @@ function closeSizeModalBg(e) {
   if (e.target === document.getElementById('sizeModal')) closeSizeModal();
 }
 
-// ── ACCORDIONS ──
 function toggleAccordion(id) {
   document.getElementById(id).classList.toggle('open');
 }
 
-// ── KEYBOARD ──
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeLightbox(); closeSizeModal(); }
   if (e.key === 'ArrowRight') lightboxNav(1);
