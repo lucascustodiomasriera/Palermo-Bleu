@@ -440,7 +440,54 @@ footer {
   margin-top: 0.5rem;
 }
 
-/* ── RESPONSIVE ── */
+/* ── ABOUT / CONTACT PAGES ── */
+.page-section {
+  display: none; min-height: 100vh;
+  padding: 8rem 2rem 5rem;
+  max-width: 760px; margin: 0 auto;
+}
+.page-section.active { display: block; }
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300; letter-spacing: 0.02em;
+  margin-bottom: 2.5rem; line-height: 1.1;
+}
+.page-title em { font-style: italic; color: var(--accent); }
+.page-body p {
+  font-size: 0.9rem; color: var(--muted); line-height: 1.95;
+  letter-spacing: 0.02em; margin-bottom: 1.4rem;
+}
+.page-body p strong { color: var(--ink); font-weight: 400; }
+.page-back {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; margin-bottom: 3rem;
+  transition: color 0.2s;
+}
+.page-back:hover { color: var(--ink); }
+.contact-email {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 300;
+  color: var(--ink); text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.3rem;
+  transition: border-color 0.2s;
+  display: inline-block; margin-top: 1rem;
+}
+.contact-email:hover { border-color: var(--ink); }
+
+/* Nav logo con icono */
+.nav-logo-wrap {
+  display: flex; align-items: center; gap: 0.6rem;
+  text-decoration: none;
+}
+.nav-logo-icon {
+  width: 22px; height: auto; opacity: 0.9;
+  filter: brightness(0) invert(1);
+  transition: filter 0.5s ease;
+}
+nav.scrolled .nav-logo-icon { filter: brightness(0); }
 @media (max-width: 900px) {
   .product-grid { grid-template-columns: repeat(2, 1fr); }
   .editorial-band { grid-template-columns: 1fr; }
@@ -524,13 +571,19 @@ footer {
     </button>
   </div>
   <div class="nav-center">
-    <a href="#" class="nav-logo">Palermo Bleu</a>
+    <a href="#" class="nav-logo-wrap" onclick="showHome(event)">
+      <img class="nav-logo-icon" src="pb_logo_outline_negro.png" alt="">
+      <span class="nav-logo">Palermo Bleu</span>
+    </a>
   </div>
   <div class="nav-right">
-    <a href="#">About</a>
-    <a href="#">Contact</a>
+    <a href="#" onclick="showPage(event,'about')">About</a>
+    <a href="#" onclick="showPage(event,'contact')">Contact</a>
   </div>
 </nav>
+
+<!-- MAIN CONTENT (homepage) -->
+<div id="main-content">
 
 <!-- HERO -->
 <section class="hero">
@@ -552,7 +605,7 @@ footer {
 </div>
 
 <div class="product-grid">
-  <a class="product-card" href="product.html">
+  <a class="product-card fade-up" href="product.html">
     <div class="product-thumb">
       <img class="front" src="tee-front.png" alt="Printed Essential White Tee">
       <img class="back" src="tee-back.jpeg" alt="Printed Essential White Tee — Back">
@@ -567,7 +620,6 @@ footer {
 <!-- EDITORIAL BAND 2 -->
 <div class="editorial-band">
   <div class="editorial-item">
-    <!-- <img src="editorial-3.jpg" alt=""> -->
     <div class="editorial-placeholder-a" style="position:absolute;inset:0;"></div>
     <div class="editorial-text">
       <span class="editorial-tag">Palermo Bleu — 2026</span>
@@ -575,7 +627,6 @@ footer {
     </div>
   </div>
   <div class="editorial-item">
-    <!-- <img src="editorial-4.jpg" alt=""> -->
     <div class="editorial-placeholder-b" style="position:absolute;inset:0;"></div>
   </div>
 </div>
@@ -586,25 +637,68 @@ footer {
   <p>Palermo Bleu draws from European expressionist painting — raw pigment, lived-in texture, the warmth of things that carry history. Each piece is built to be worn, not preserved.</p>
 </div>
 
+</div><!-- end main-content -->
+
+<!-- ABOUT PAGE -->
+<div class="page-section" id="page-about">
+  <a href="#" class="page-back" onclick="showHome(event)">← Back</a>
+  <h1 class="page-title">Born from the <em>Mediterranean.</em><br>Built to last.</h1>
+  <div class="page-body">
+    <p>Palermo Bleu is a Barcelona-based clothing brand rooted in the visual language of European expressionist painting — the raw pigment of Rothko, the gestural energy of Basquiat, the colour field of the Mediterranean coast at dusk. We believe clothing should carry that same sense of history and intention.</p>
+    <p>Our garments are designed with a single obsession: <strong>cut and proportion</strong>. Every piece is developed to enhance the body's natural silhouette — broader shoulders, a cleaner chest line, a length that neither swallows nor exposes. The result is clothing that simply fits better and makes you look better, without requiring you to think about it.</p>
+    <p>We work with <strong>local suppliers and producers in and around Barcelona</strong>, keeping our supply chain short, transparent, and accountable. Fabrics are sourced for quality and durability — natural fibres, honest weights, no synthetic shortcuts. We produce in small quantities, on purpose.</p>
+    <p>Sustainability for us isn't a marketing claim. It's the consequence of making fewer, better things — garments that don't fall apart, don't go out of style, and don't end up in landfill after a season. Pieces you keep.</p>
+    <p>The Mediterranean informs everything: the warmth of terracotta, the blue of open water, the unhurried confidence of someone who grew up knowing how to dress without trying too hard. That's the world Palermo Bleu lives in.</p>
+  </div>
+</div>
+
+<!-- CONTACT PAGE -->
+<div class="page-section" id="page-contact">
+  <a href="#" class="page-back" onclick="showHome(event)">← Back</a>
+  <h1 class="page-title">Get in <em>touch.</em></h1>
+  <div class="page-body">
+    <p>For orders, collaborations, press, or anything else — write to us directly. We read everything.</p>
+    <a class="contact-email" href="mailto:lcustodiomasriera@gmail.com">lcustodiomasriera@gmail.com</a>
+    <p style="margin-top: 2rem;">We'll be setting up a dedicated brand email soon. Until then, this is the direct line.</p>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div>
     <p class="footer-logo">Palermo Bleu</p>
-    <p class="footer-copy">© 2026</p>
+    <p class="footer-copy">© 2026 — Barcelona</p>
   </div>
   <div class="footer-col">
-    <a href="#">Shop</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
+    <a href="#" onclick="showHome(event)">Shop</a>
+    <a href="#" onclick="showPage(event,'about')">About</a>
+    <a href="#" onclick="showPage(event,'contact')">Contact</a>
   </div>
   <div class="footer-col">
     <a href="#">Instagram</a>
-    <a href="#">Size Guide</a>
+    <a href="product.html">Size Guide</a>
     <a href="#">Shipping & Returns</a>
   </div>
 </footer>
 
 <script>
+// ── PAGES ──
+function showPage(e, page) {
+  e.preventDefault();
+  document.getElementById('main-content').style.display = 'none';
+  document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector('nav').classList.add('scrolled');
+  window.scrollTo(0, 0);
+}
+function showHome(e) {
+  if (e) e.preventDefault();
+  document.getElementById('main-content').style.display = 'block';
+  document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+  window.scrollTo(0, 0);
+  handleNav();
+}
+
 // ── INTRO ──
 window.addEventListener('load', () => {
   setTimeout(() => {
@@ -679,7 +773,6 @@ function handleParallax() {
 }
 
 // ── FADE UP ON SCROLL ──
-const fadeEls = document.querySelectorAll('.fade-up');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -687,17 +780,8 @@ const observer = new IntersectionObserver((entries) => {
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.12 });
-fadeEls.forEach(el => observer.observe(el));
-
-// ── PRODUCT CARDS FADE ──
-document.querySelectorAll('.product-card').forEach((card, i) => {
-  card.style.opacity = '0';
-  card.style.transform = 'translateY(20px)';
-  card.style.transition = `opacity 0.5s ease ${i * 0.08}s, transform 0.5s ease ${i * 0.08}s`;
-  observer.observe(card);
-  card.classList.add('fade-up');
-});
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
 window.addEventListener('scroll', handleParallax, { passive: true });
 handleParallax();
